@@ -92,12 +92,15 @@
 <body>
   <form action="" class="form">
     <button class="btn" id="btn" type="button">Оформити</button>
-      
+
     <input type="text" class="input" id="input3" required>
     <label for="input3" class="label">Поясненя до вашого заказу</label>
 
     <input type="text" class="input" id="input2" required>
     <label for="input2" class="label">Ще текст</label>
+
+    <input type="text" class="input" id="input4" required>
+    <label for="input4" class="label">Дата, яку вишивати</label>
 
     <input type="text" class="input" id="input" required>
     <label for="input" class="label">Ім'я, яке вишивати</label>
@@ -111,17 +114,89 @@
         let input = document.querySelector("#input");
         let input2 = document.querySelector("#input2");
         let input3 = document.querySelector("#input3");
-        let order = "";
+        let input4 = document.querySelector("#input4");
+        let label = document.querySelector("#input + .label");
+        let label2 = document.querySelector("#input2 + .label");
+        let label3 = document.querySelector("#input3 + .label");
+        let label4 = document.querySelector("#input4 + .label");
+
+        reload_price_name();
+        reload_price_date();
+        reload_price_text();
+
+        input.oninput = function () {
+            reload_price_name();
+        }
+
+        input4.oninput = function () {
+            reload_price_date();
+        }
+
+        input2.oninput = function () {
+            reload_price_text();
+        }
 
         btn.addEventListener("click", () => {
+            let order = "";
+            if (input.value.length > 0) {
+                order += "Ім'я: " + input.value + label.innerHTML.replace("Ім'я, яке вишивати\nЦіна - ", " ") + "\n";
+            }
+            if (input4.value.length > 0) {
+                order += "Дата: " + input4.value + label4.innerHTML.replace("Дата, яку вишивати\nЦіна - ", " ") + "\n";
+            }
+            if (input2.value.length > 0) {
+                order += "Ще текст: " + input2.value + label2.innerHTML.replace("Ще текст\nЦіна - ", " ") + "\n";
+            }
+            if (input3.value.length > 0) {
+                order += "Поясненя до вашого заказу: " + input3.value;
+            }
             let data = {
                 name: input.value,
+                date: input4.value,
                 text: input2.value,
-                about: input3.value
+                about: input3.value,
+                order: order
             }
             tg.sendData(JSON.stringify(data));
             tg.close();
         })
+        function reload_price_name() {
+            let price = "";
+            if (input.value.length == 0) {
+                price = "";
+            } else if (input.value.length <= 3) {
+                price = "\nЦіна - 80грн";
+            } else if (input.value.length > 3) {
+                price = "\nЦіна - 100грн";
+            }
+            label.innerHTML = "Ім'я, яке вишивати" + price
+        }
+        function reload_price_date() {
+            let price = "";
+            if (input4.value.length == 0) {
+                price = "";
+            } else {
+                price = "\nЦіна - 40грн";
+            }
+            label4.innerHTML = "Дата, яку вишивати" + price
+        }
+        function reload_price_text() {
+            let price = "";
+            if (input2.value.length == 0) {
+                price = "";
+            } else if (input2.value.toLowerCase() == "таїнство хрещеня" || input2.value.toLowerCase() == "таинство крещения") {
+                price = "\nЦіна - 80грн";
+            } else if (input2.value.toLowerCase().includes("з любов'ю від крещеной мами") || input2.value.toLowerCase().includes("с любовъю от крестной мамы")) {
+                price = "\nЦіна - 130грн";
+            } else if (input2.value.toLowerCase().includes("з любов'ю від крещених батьків") || input2.value.toLowerCase().includes("с любовъю от крестных родителей")) {
+                price = "\nЦіна - 140грн";
+            } else if (input2.value.toLowerCase().includes("з любов'ю від крещеного батька") || input2.value.toLowerCase().includes("с любовъю от крёстного отца")) {
+                price = "\nЦіна - 130грн";
+            } else if (input2.value.toLowerCase().includes("Нехай Господь тебе оберігає".toLowerCase()) || input2.value.toLowerCase().includes("Пусть Господь тебя оберигает".toLowerCase())) {
+                price = "\nЦіна - 150грн";
+            }
+            label2.innerHTML = "Ще текст" + price
+        }
     </script>
 </body>
 </html>
