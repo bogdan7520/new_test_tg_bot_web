@@ -138,14 +138,18 @@
 
         btn.addEventListener("click", () => {
             let order = "";
+            let price_vishivka = 0;
             if (input.value.length > 0) {
                 order += "Ім'я: " + input.value + label.innerHTML.replace("Ім'я, яке вишивати\nЦіна - ", " ") + "\n";
+                price_vishivka += Number(label.innerHTML.replace("Ім'я, яке вишивати\nЦіна - ", "").replace("грн", ""));
             }
             if (input4.value.length > 0) {
                 order += "Дата: " + input4.value + label4.innerHTML.replace("Дата, яку вишивати\nЦіна - ", " ") + "\n";
+                price_vishivka += Number(label4.innerHTML.replace("Дата, яку вишивати\nЦіна - ", "").replace("грн", ""));
             }
             if (input2.value.length > 0) {
                 order += "Ще текст: " + input2.value + label2.innerHTML.replace("Ще текст\nЦіна - ", " ") + "\n";
+                price_vishivka += Number(label2.innerHTML.replace("Ще текст\nЦіна - ", "").replace("грн", ""));
             }
             if (input3.value.length > 0) {
                 order += "Поясненя до вашого заказу: " + input3.value;
@@ -155,7 +159,8 @@
                 date: input4.value,
                 text: input2.value,
                 about: input3.value,
-                order: order
+                order: order,
+                price_vishivka: price_vishivka
             }
             tg.sendData(JSON.stringify(data));
             tg.close();
