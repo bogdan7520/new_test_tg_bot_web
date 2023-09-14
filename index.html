@@ -31,7 +31,7 @@
           color: var(--tg-theme-text-color);
         }
         .form {
-          background: #dae6ff;
+          background: #8ba1c6;
           border-radius: 3px;
           padding: 20px;
           color: #333;
@@ -44,13 +44,14 @@
           padding: 10px 20px;
           outline: none;
           font-size: 20px;
-          background: #8ba1c6;
+          background: #dae6ff;
           border-radius: 3px;
           border: 2px solid #8ba1c6;
           box-shadow: 0 0 5px rgba(255, 255, 255, 0.05);
           color: #333;
           z-index: 10;
           margin-top: 20px;
+          font-weight: bold;
         }
         .form .input + .label {
           margin-bottom: -55px;
@@ -69,7 +70,7 @@
           margin-left: 10px;
           margin-top: 20;
           font-size: 16px;
-          color: #333;
+          color: #fff;
         }
 
         .btn {
@@ -86,18 +87,114 @@
         .btn:hover {
             background: var(--tg-theme-secondary-bg-color);
         }
+
+        .form .checkbox {
+          display: none;
+          margin-top: 20px;
+        }
+        .form .checkbox + .label {
+          position: relative;
+          display: block;
+          height: 25px;
+          width: 70px;
+          border-radius: 100px;
+          background: #c9c9c9;
+          cursor: pointer;
+          margin-top: 20px;
+        }
+        .form .checkbox + .label .round {
+          position: relative;
+          height: 30px;
+          width: 40px;
+          background: #9c4147;
+          border-radius: 50px;
+          top: -2.5px;
+          left: -2.5px;
+          box-shadow: inset -2px -2px 5px rgba(51, 51, 51, 0.2),
+          inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+          0px 0px 5px rgba(51, 51, 51, 0.3);
+          transition: all 0.3s ease;
+        }
+        .form .checkbox:checked + .label .round {
+          transform: translateX(100%);
+          background: #428048;
+        }
+        .form .checkbox + .label .text {
+          position: absolute;
+          top: 3px;
+          left: 90px;
+          user-select: none;
+          transition: all 0.3s ease;
+          width: 190px;
+          color: #fff;
+        }
+        .form .checkbox:checked + .label .round::after {
+          content: "ua";
+        }
+        .form .checkbox + .label .round::after {
+          content: "ru";
+          display: inline-block;
+          position: absolute;
+          top: calc(50% - 10px);
+          left: calc(50% - 10px);
+          font-weight: bold;
+          color: white;
+        }
+
+        #select_id {
+            margin-top: 5px;
+            padding: 10px 20px;
+            background: #dae6ff;
+            border: none;
+            border-radius: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        #select_id option {
+            font-weight: bold;
+        }
+        #select_id + .label {
+            margin-top: 25px;
+            color: #fff;
+        }
+        .btn:disabled {
+            cursor: no-drop;
+            color: #ccc;
+        }
   </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <form action="" class="form">
-    <button class="btn" id="btn" type="button">Оформити</button>
+    <button class="btn" id="btn" type="button" disabled>Оформити</button>
+
+    <input type="checkbox" class="checkbox" id="checkbox" checked>
+    <label for="checkbox" class="label">
+      <div class="round"></div>
+      <span class="text">На якій мові вишивати</span>
+    </label>
+
+    <input type="number" class="input" id="input5" required>
+    <label for="input5" class="label">Ваш телефон з viber <b style="color: red;">*</b></label>
 
     <input type="text" class="input" id="input3" required>
     <label for="input3" class="label">Поясненя до вашого заказу</label>
 
     <input type="text" class="input" id="input2" required>
     <label for="input2" class="label">Ще текст</label>
+
+    <select name="" id="select_id">
+        <option value="none">Нічого</option>
+        <option value="tah">Таінство Хрещення - 80грн</option>
+        <option value="slim">З любов'ю від хрещеної матері - 130грн</option>
+        <option value="slm">З любов'ю від хрестної матері - 130грн</option>
+        <option value="slit">З любов'ю від хрещеного батька - 130грн</option>
+        <option value="slt">З любов'ю від хрестного батька - 130грн</option>
+        <option value="sliti">З любов'ю від хрещених батьків - 140грн</option>
+        <option value="slti">З любов'ю від хрестних батьків - 140грн</option>
+        <option value="nehay">Нехай Господь тебе оберігає - 150грн</option>
+    </select>
+    <label for="select_id" class="label">Текст</label>
 
     <input type="text" class="input" id="input4" required>
     <label for="input4" class="label">Дата, яку вишивати</label>
@@ -115,14 +212,23 @@
         let input2 = document.querySelector("#input2");
         let input3 = document.querySelector("#input3");
         let input4 = document.querySelector("#input4");
+        let input5 = document.querySelector("#input5");
         let label = document.querySelector("#input + .label");
         let label2 = document.querySelector("#input2 + .label");
         let label3 = document.querySelector("#input3 + .label");
         let label4 = document.querySelector("#input4 + .label");
+        let select = document.querySelector("#select_id");
+        let checkbox = document.querySelector("#checkbox");
 
         reload_price_name();
         reload_price_date();
         reload_price_text();
+        select_change();
+        reload_phone();
+
+        select.onchange = function () {
+          select_change();
+        }
 
         input.oninput = function () {
             reload_price_name();
@@ -134,6 +240,9 @@
 
         input2.oninput = function () {
             reload_price_text();
+        }
+        input5.oninput = function () {
+            reload_phone();
         }
 
         btn.addEventListener("click", () => {
@@ -147,20 +256,35 @@
                 order += "Дата: " + input4.value + label4.innerHTML.replace("Дата, яку вишивати\nЦіна - ", " ") + "\n";
                 price_vishivka += Number(label4.innerHTML.replace("Дата, яку вишивати\nЦіна - ", "").replace("грн", ""));
             }
+            if (select.selectedIndex != 0) {
+                order += "Текст: " + select.options[select.selectedIndex].text + "\n";
+                price_vishivka += Number(select.options[select.selectedIndex].text.split(" ").pop().replace("грн", ""));
+            }
             if (input2.value.length > 0) {
-                order += "Ще текст: " + input2.value + label2.innerHTML.replace("Ще текст\nЦіна - ", " ") + "\n";
-                price_vishivka += Number(label2.innerHTML.replace("Ще текст\nЦіна - ", "").replace("грн", ""));
+                order += "Ще текст: " + input2.value + label2.innerHTML.replace("Ще текст", "").replace("\nЦіна - ", " ") + "\n";
+                if (Number.isInteger(Number(label2.innerHTML.replace("Ще текст\nЦіна - ", "").replace("грн", "")))) {
+                    price_vishivka += Number(label2.innerHTML.replace("Ще текст\nЦіна - ", "").replace("грн", ""));
+                } else {
+                    price_vishivka = "Про вартість вишивки відпишемося вам на viber";
+                }
             }
             if (input3.value.length > 0) {
                 order += "Поясненя до вашого заказу: " + input3.value;
             }
+            let language = "ua";
+            if (!checkbox.checked) {
+                language = "ru";
+            }
             let data = {
                 name: input.value,
                 date: input4.value,
+                text_from: select.options[select.selectedIndex].text.split(" ").slice(0, -2).join(" "),
                 text: input2.value,
                 about: input3.value,
                 order: order,
-                price_vishivka: price_vishivka
+                price_vishivka: price_vishivka,
+                language: language,
+                number: input5.value
             }
             tg.sendData(JSON.stringify(data));
             tg.close();
@@ -201,6 +325,18 @@
                 price = "\nЦіна - 150грн";
             }
             label2.innerHTML = "Ще текст" + price
+        }
+        function select_change() {
+            let selected_index = select.selectedIndex;
+            let options = select.options;
+
+        }
+        function reload_phone() {
+            if ((input5.value.split("")[0] != 0 && input5.value.length == 9) || (input5.value.split("")[0] == 0 && input5.value.length == 10)) {
+                btn.removeAttribute("disabled");
+            } else {
+                btn.setAttribute("disabled", "disabled");
+            }
         }
     </script>
 </body>
